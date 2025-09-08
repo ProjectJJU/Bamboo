@@ -19,7 +19,11 @@ namespace Bamboo
     {
         // init engine
         m_engine = new Bamboo::Engine;
-        m_engine->init();
+        if (!m_engine->initialize())
+        {
+            LOG_ERROR("Failed to initialize engine");
+            return;
+        }
 
         // create editor ui
         std::shared_ptr<EditorUI> menu_ui = std::make_shared<MenuUI>();
@@ -31,6 +35,8 @@ namespace Bamboo
         m_simulation_ui = std::make_shared<SimulationUI>();
         m_editor_uis = { menu_ui, tool_ui, world_ui, property_ui, asset_ui, m_simulation_ui, log_ui };
 
+
+        //m_editor_uis = {log_ui };
         // init all editor uis
 		for (auto& editor_ui : m_editor_uis)
 		{
@@ -53,22 +59,19 @@ namespace Bamboo
 		}
 
         // destroy engine
-        m_engine->destroy();
+        m_engine->shutdown();
         delete m_engine;
     }
 
     void Editor::run()
     {
-        while (true)
+        while (m_engine->isRunning())
         {
-            // get delta time
-            float delta_time = m_engine->calcDeltaTime();
-
             // tick editor
             // TODO
 
             // tick engine
-            if (!m_engine->tick(delta_time))
+            if (!m_engine->tick())
             {
                 return;
             }

@@ -22,11 +22,19 @@ namespace Bamboo
 		m_timer_manager = std::make_shared<TimerManager>();
         m_timer_manager->init();
 
-		m_file_system = std::make_shared<FileSystem>();
-		m_file_system->init();
+        // Only initialize file system if not already initialized
+		if (!m_file_system)
+        {
+            m_file_system = std::make_shared<FileSystem>();
+            m_file_system->init();
+        }
 
-		m_log_system = std::make_shared<LogSystem>();
-		m_log_system->init();
+        // Only initialize log system if not already initialized
+		if (!m_log_system)
+        {
+            m_log_system = std::make_shared<LogSystem>();
+            m_log_system->init();
+        }
 
         m_config_manager = std::make_shared<ConfigManager>();
         m_config_manager->init();

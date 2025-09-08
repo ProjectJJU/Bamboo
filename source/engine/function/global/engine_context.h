@@ -28,6 +28,10 @@ namespace Bamboo
             void setDeltaTime(float delta_time) { m_delta_time = delta_time; }
             float getDeltaTime() { return m_delta_time; }
 
+            // Early initialization setters (for Engine class)
+            void setFileSystem(std::shared_ptr<class FileSystem> file_system) { m_file_system = file_system; }
+            void setLogSystem(std::shared_ptr<class LogSystem> log_system) { m_log_system = log_system; }
+
             // runtime modes
             bool isEditor();
             bool isApplication() { return !isEditor(); }

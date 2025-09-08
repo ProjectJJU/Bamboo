@@ -1,28 +1,89 @@
-#pragma once 
+#pragma once
 
-#include <chrono>
+#include <memory>
 
 namespace Bamboo
 {
+    // Forward declarations
+    class TimeManager;
+    /**
+     * @brief Main engine class responsible for the game loop and system coordination
+     * Refactored to follow single responsibility principle
+     */
     class Engine
     {
-        public:
-            void init();
-            void destroy();
-            bool tick(float delta_time);
+    public:
+        Engine();
+        ~Engine();
 
-            float calcDeltaTime();
-            int getFPS() { return m_fps; }
+        /**
+         * @brief Initializes the engine and all subsystems
+         * @return true if initialization succeeded, false otherwise
+         */
+        bool initialize();
 
-        private:
-            void logicTick(float delta_time);
-            void renderTick(float delta_time);
+        /**
+         * @brief Shuts down the engine and cleans up resources
+         */
+        void shutdown();
 
-            void calcFPS(float delta_time);
+        /**
+         * @brief Runs one frame of the engine
+         * @return true if the engine should continue running, false to exit
+         */
+        bool tick();
 
-            int m_fps;
-            int m_frame_count;
-            float m_average_duration;
-            std::chrono::steady_clock::time_point m_last_tick_time_point;
+        /**
+         * @brief Checks if the engine is running
+         * @return true if running, false otherwise
+         */
+        bool isRunning() const { return m_is_running; }
+
+        /**
+         * @brief Gets the current FPS
+         * @return Current frames per second
+         */
+        int getFPS() const;
+
+        /**
+         * @brief Gets the delta time of the last frame
+         * @return Delta time in seconds
+         */
+        float getDeltaTime() const;
+
+    private:
+        /**
+         * @brief Initializes the log system first (before any LOG macros can be used)
+         * @return true if log system initialized successfully
+         */
+        bool initializeLogSystem();
+
+        /**
+         * @brief Initializes all engine subsystems in proper order
+         * @return true if all systems initialized successfully
+         */
+        bool initializeSystems();
+
+        /**
+         * @brief Shuts down all systems in reverse order
+         */
+        void shutdownSystems();
+
+        /**
+         * @brief Updates logic systems
+         * @param delta_time Time since last frame
+         */
+        void updateLogic(float delta_time);
+
+        /**
+         * @brief Updates rendering system
+         * @param delta_time Time since last frame
+         */
+        void updateRender(float delta_time);
+
+        bool m_is_running;
+        bool m_is_initialized;
+        
+        std::shared_ptr<class TimeManager> m_time_manager;
     };
 }
